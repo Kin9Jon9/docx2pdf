@@ -30,7 +30,7 @@ function processing(enterPath, outputPath){
 function getDocxList(){
   return new Promise((resolve, reject)=>{
     fs.readdir(path.join(__dirname, '/docx'),(err, fileList)=>{
-      if (err) reject(fileList);
+      if (err) reject(err);
       else resolve(fileList);
     })
   })
