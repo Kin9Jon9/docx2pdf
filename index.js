@@ -2,10 +2,11 @@ const libre = require('libreoffice-convert');
 const path = require('path');
 const fs = require('fs');
 const extend = '.pdf'
+const async = require('async');
 
 //파일명에 경로를 합칩니다.
 const getEnterPath = (filename) => {
-  return path.join(__dirname, `/docx/${filename}`);
+  return path.join(__dirname, `/docx2/${filename}`);
 }
 
 //파일명에 경로를 합치되, 기존의 .docx 확장자는 삭제합니다.
@@ -16,20 +17,23 @@ const getOutputPath = (filename) => {
 
 // Docx2Pdf 함수.
 function processing(enterPath, outputPath){
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const file = fs.readFileSync(enterPath);
-    libre.convert(file, extend, undefined, (err, done) => {
-        if (err) console.log(`변환 중 에러 : ${err}`);
-        fs.writeFileSync(outputPath, done);
+    await libre.convert(file, extend, undefined, (err, done) => {
+        if (err) {
+          console.log(`변환 중 에러 : ${err}`);
+        } else {
+          fs.writeFileSync(outputPath, done);
+          resolve(true);
+        }
     });
-    resolve();
   })
 }
 
 // docx 폴더 내부에 있는 모든 파일을 가져옵니다.
 function getDocxList(){
   return new Promise((resolve, reject)=>{
-    fs.readdir(path.join(__dirname, '/docx'),(err, fileList)=>{
+    fs.readdir(path.join(__dirname, '/docx2'),(err, fileList)=>{
       if (err) reject(err);
       else resolve(fileList);
     })
